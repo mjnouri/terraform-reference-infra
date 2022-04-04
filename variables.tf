@@ -13,3 +13,7 @@ variable "env" {
 variable "project_name" {
   default = ""
 }
+
+variable "key_name" {
+  default = ""
+}
