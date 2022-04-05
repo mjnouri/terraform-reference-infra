@@ -1,24 +1,29 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+module "vpc" {
+  source = "git@github.com:mjnouri/terraform-modules.git//vpc"
+  env                    = var.env
+  project_name           = var.project_name
 }
 
-module "jenkins-controller" {
-  source = "git@github.com:mjnouri/terraform-modules.git//ec2"
-  ami = data.aws_ami.ubuntu.id
-  instance_type = "t3.small"
-  key_name = "mark-test"
-  env = "dev"
-  project_name = "module-testing"
+module "ubuntu_ami" {
+  source = "git@github.com:mjnouri/terraform-modules.git//ubuntu-ami"
+}
+
+module "jenkins-controller-ec2" {
+  source                 = "git@github.com:mjnouri/terraform-modules.git//ec2"
+  ami                    = module.ubuntu_ami.ubuntu_ami_output
+  instance_type          = var.instance_type
+  vpc_security_group_ids = module.sg.sg_output
+  subnet_id              = module.vpc.vpc_subnet_output
+  key_name               = var.key_name
+  env                    = var.env
+  project_name           = var.project_name
+}
+
+module "sg" {
+  source           = "git@github.com:mjnouri/terraform-modules.git//sg"
+  ingress_port     = var.ingress_port
+  ingress_protocol = var.ingress_protocol
+  ingress_cidr     = var.ingress_cidr
+  env              = var.env
+  project_name     = var.project_name
 }
