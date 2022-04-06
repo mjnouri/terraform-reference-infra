@@ -1,6 +1,8 @@
 resource "aws_security_group" "sg" {
   name = "${var.project_name}-${var.env}-sg"
 
+  vpc_id = var.vpc_id
+
   ingress {
     from_port   = var.ingress_port
     to_port     = var.ingress_port
@@ -37,6 +39,10 @@ variable "project_name" {
   default = ""
 }
 
+variable "vpc_id" {
+  default = ""
+}
+
 output "sg_output" {
-  value = aws_security_group.sg.id
+  value = aws_security_group.sg[*].id
 }

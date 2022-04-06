@@ -3,6 +3,7 @@ resource "aws_instance" "instance" {
   instance_type          = var.instance_type
   key_name               = var.key_name
   vpc_security_group_ids = var.vpc_security_group_ids
+  subnet_id              = var.subnet_id
   tags = {
     Name         = "${var.project_name}-${var.env}-ec2"
     Environment  = var.env
@@ -29,7 +30,11 @@ variable "key_name" {
   default = ""
 }
 
+variable "subnet_id" {
+  default = ""
+}
+
 variable "vpc_security_group_ids" {
-  type = list
+  type = set(string)
   default = []
 }
