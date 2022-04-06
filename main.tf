@@ -1,8 +1,7 @@
 module "vpc" {
 # source       = "git@github.com:mjnouri/terraform-modules.git//vpc"
   source       = "./modules/vpc"
-  env          = var.env
-  project_name = var.project_name
+  common_tags  = var.common_tags
 }
 
 module "ubuntu_ami" {
@@ -18,8 +17,7 @@ module "jenkins-controller-ec2" {
   vpc_security_group_ids = module.sg.sg_output
   subnet_id              = module.vpc.vpc_subnet_output
   key_name               = var.key_name
-  env                    = var.env
-  project_name           = var.project_name
+  common_tags  = var.common_tags
 }
 
 module "sg" {
@@ -28,7 +26,6 @@ module "sg" {
   ingress_port     = var.ingress_port
   ingress_protocol = var.ingress_protocol
   ingress_cidr     = var.ingress_cidr
-  env              = var.env
-  project_name     = var.project_name
+  common_tags      = var.common_tags
   vpc_id           = module.vpc.vpc_id_output
 }

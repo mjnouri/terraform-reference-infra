@@ -5,8 +5,7 @@ resource "aws_instance" "instance" {
   vpc_security_group_ids = var.vpc_security_group_ids
   subnet_id              = var.subnet_id
   tags = {
-    Name         = "${var.project_name}-${var.env}-ec2"
-    Environment  = var.env
+    Name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-ec2"
   }
 }
 
@@ -18,20 +17,16 @@ variable "instance_type" {
   default = ""
 }
 
-variable "env" {
-  default = ""
-}
-
-variable "project_name" {
-  default = ""
-}
-
 variable "key_name" {
   default = ""
 }
 
 variable "subnet_id" {
   default = ""
+}
+
+variable "common_tags" {
+  type = map
 }
 
 variable "vpc_security_group_ids" {

@@ -1,5 +1,5 @@
 resource "aws_security_group" "sg" {
-  name = "${var.project_name}-${var.env}-sg"
+  name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-sg"
 
   vpc_id = var.vpc_id
 
@@ -31,16 +31,12 @@ variable "ingress_cidr" {
   default = ""
 }
 
-variable "env" {
-  default = ""
-}
-
-variable "project_name" {
-  default = ""
-}
-
 variable "vpc_id" {
   default = ""
+}
+
+variable "common_tags" {
+  type = map
 }
 
 output "sg_output" {

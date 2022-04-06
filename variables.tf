@@ -1,3 +1,11 @@
+variable "common_tags" {
+  type = map
+  default = {
+    "env"          = "dev"
+    "project_name" = "module-stuff"
+  }
+}
+
 variable "ami" {
   default = ""
 }
@@ -13,14 +21,6 @@ variable "vpc_security_group_ids" {
 
 variable "key_name" {
   default = "mark-test"
-}
-
-variable "env" {
-  default = "dev"
-}
-
-variable "project_name" {
-  default = "module-testing"
 }
 
 variable "ingress_port" {
