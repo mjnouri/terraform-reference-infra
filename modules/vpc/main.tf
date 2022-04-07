@@ -33,46 +33,64 @@ resource "aws_route_table" "private_rt" {
 }
 
 resource "aws_subnet" "public_subnet" {
+  count                   = (lookup(var.common_tags, "env") == "prod") ? 3 : 2
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.0.1.0/24"
-  availability_zone       = "us-east-1a"
+  cidr_block              = var.public_subnet_cidr[count.index]
+  availability_zone       = var.az[count.index]
   map_public_ip_on_launch = "true"
   tags = {
-    Name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-public-subnet"
+    Name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-public-subnet-${count.index}"
   }
 }
 
 resource "aws_subnet" "private_subnet" {
+  count             = (lookup(var.common_tags, "env") == "prod") ? 3 : 2
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.0.4.0/24"
-  availability_zone = "us-east-1b"
+  cidr_block        = var.private_subnet_cidr[count.index]
+  availability_zone = var.az[count.index]
   tags = {
-    Name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-private-subnet"
+    Name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-private-subnet-${count.index}"
   }
 }
 
 resource "aws_route_table_association" "public_subnet_route_table_assoc" {
-  subnet_id      = aws_subnet.public_subnet.id
+  count          = (lookup(var.common_tags, "env") == "prod") ? 3 : 2
+  subnet_id      = aws_subnet.public_subnet[count.index].id
   route_table_id = aws_route_table.public_rt.id
 }
 
 resource "aws_route_table_association" "private_subnet_route_table_assoc" {
-  subnet_id      = aws_subnet.private_subnet.id
+  count          = (lookup(var.common_tags, "env") == "prod") ? 3 : 2
+  subnet_id      = aws_subnet.private_subnet[count.index].id
   route_table_id = aws_route_table.private_rt.id
 }
 
-variable "subnet_id" {
-  default = ""
+
+# Variables
+
+variable "public_subnet_cidr" {
+  default = [ "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24" ]
+}
+
+variable "private_subnet_cidr" {
+  default = [ "10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24" ]
+}
+
+variable "az" {
+  default = [ "us-east-1a", "us-east-1b" , "us-east-1c" ]
 }
 
 variable "common_tags" {
   type = map
 }
 
+
+# Outputs
+
 output "vpc_id_output" {
   value = aws_vpc.vpc.id
 }
 
-output "vpc_subnet_output" {
-  value = aws_subnet.public_subnet.id
+output "public_subnet_id_output" {
+  value = aws_subnet.public_subnet[*].id
 }

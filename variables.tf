@@ -1,5 +1,5 @@
 variable "common_tags" {
-  type = map
+  type = map(string)
   default = {
     "env"          = "dev"
     "project_name" = "module-stuff"

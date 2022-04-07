@@ -9,12 +9,10 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
-
   default_tags {
     tags = {
       project_name = "module_stuff"
-      env = "dev"
+      env          = "dev"
     }
   }
-  
 }

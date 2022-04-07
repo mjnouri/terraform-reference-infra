@@ -3,7 +3,7 @@ resource "aws_instance" "instance" {
   instance_type          = var.instance_type
   key_name               = var.key_name
   vpc_security_group_ids = var.vpc_security_group_ids
-  subnet_id              = var.subnet_id
+  subnet_id              = var.subnet_id[0]
   tags = {
     Name = "${lookup(var.common_tags, "project_name")}-${lookup(var.common_tags, "env")}-ec2"
   }
@@ -22,7 +22,8 @@ variable "key_name" {
 }
 
 variable "subnet_id" {
-  default = ""
+  type    = list(string)
+  default = []
 }
 
 variable "common_tags" {
